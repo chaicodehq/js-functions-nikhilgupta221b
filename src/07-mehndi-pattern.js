@@ -53,21 +53,100 @@
  *   generatePattern(3)        // => ["*", "**", "***", "**", "*"]
  */
 export function repeatChar(char, n) {
-  // Your code here
+  if (typeof char !== "string" || char.length === 0) {
+    return "";
+  }
+
+  if (n <= 0) {
+    return "";
+  }
+
+  return char + repeatChar(char, n - 1);
 }
 
 export function sumNestedArray(arr) {
-  // Your code here
+  if (!Array.isArray(arr)) {
+    return 0;
+  }
+
+  if (arr.length === 0) {
+    return 0;
+  }
+
+  let sum = 0;
+
+  for (let i = 0; i < arr.length; i++) {
+    if (Number.isInteger(arr[i])) {
+      sum += arr[i];
+    } else if (Array.isArray(arr[i])) {
+      sum += sumNestedArray(arr[i]);
+    } else {
+      continue;
+    }
+  }
+
+  return sum;
 }
 
 export function flattenArray(arr) {
-  // Your code here
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+
+  let result = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    if (!Array.isArray(arr[i])) {
+      result.push(arr[i]);
+    } else {
+      const flat = flattenArray(arr[i]);
+      result.push(...flat);
+    }
+  }
+
+  return result;
 }
 
 export function isPalindrome(str) {
-  // Your code here
+  if (typeof str !== "string") {
+    return false;
+  }
+
+  if (str.length <= 1) {
+    return true;
+  }
+
+  return (
+    str.at(0).toLowerCase() === str.at(-1).toLowerCase() &&
+    isPalindrome(str.slice(1, -1))
+  );
 }
 
 export function generatePattern(n) {
-  // Your code here
+  if (!Number.isInteger(n) || n <= 0) {
+    return [];
+  }
+  if (n === 1) {
+    return ["*"];
+  }
+
+  const prevPattern = generatePattern(n - 1);
+
+  const midIndex = n - 2;
+
+  const currentLine = "*".repeat(n);
+
+  return [
+    ...prevPattern.slice(0, midIndex + 1),
+    currentLine,
+    ...prevPattern.slice(midIndex),
+  ];
 }
+
+//  *   5. generatePattern(n)
+//  *      - Generate symmetric mehndi border pattern
+//  *      - n = 1 => ["*"]
+//  *      - n = 2 => ["*", "**", "*"]
+//  *      - n = 3 => ["*", "**", "***", "**", "*"]
+//  *      - Pattern goes from 1 star up to n stars, then back down to 1
+//  *      - Use recursion to build the ascending part, then mirror it

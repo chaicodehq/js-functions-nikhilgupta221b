@@ -54,21 +54,100 @@
  *   // red and blue objects are UNCHANGED
  */
 export function mixColors(color1, color2) {
-  // Your code here
+  if (!color1 || !color2) {
+    return null;
+  }
+  const name = `${color1.name}-${color2.name}`;
+
+  const rRound = Math.round((color1.r + color2.r) / 2);
+
+  return {
+    name: `${color1.name}-${color2.name}`,
+    r: Math.round((color1.r + color2.r) / 2),
+    g: Math.round((color1.g + color2.g) / 2),
+    b: Math.round((color1.b + color2.b) / 2),
+  };
 }
 
 export function adjustBrightness(color, factor) {
-  // Your code here
+  if (!color || typeof factor !== "number") {
+    return null;
+  }
+  let newR = color.r * factor;
+  let newG = color.g * factor;
+  let newB = color.b * factor;
+
+  if (newR < 0) {
+    newR = 0;
+  } else if (newR > 255) {
+    newR = 255;
+  } else {
+    newR = Math.round(newR);
+  }
+  if (newG < 0) {
+    newG = 0;
+  } else if (newG > 255) {
+    newG = 255;
+  } else {
+    newG = Math.round(newG);
+  }
+  if (newB < 0) {
+    newB = 0;
+  } else if (newB > 255) {
+    newB = 255;
+  } else {
+    newB = Math.round(newB);
+  }
+  return {
+    name: color.name,
+    r: newR,
+    g: newG,
+    b: newB,
+  };
 }
 
 export function addToPalette(palette, color) {
-  // Your code here
+  if (!color) {
+    return [...palette];
+  }
+  if (!Array.isArray(palette)) {
+    return [color];
+  }
+  let newPalette = [...palette];
+  newPalette.push(color);
+  return newPalette;
 }
 
 export function removeFromPalette(palette, colorName) {
-  // Your code here
+  if (!Array.isArray(palette)) {
+    return [];
+  }
+
+  const newPalette = palette.filter((col) => col.name !== colorName);
+  return newPalette;
 }
 
 export function mergePalettes(palette1, palette2) {
-  // Your code here
+  if (!Array.isArray(palette1)) {
+    palette1 = [];
+  }
+  if (!Array.isArray(palette2)) {
+    palette2 = [];
+  }
+
+  let newPalette = [];
+
+  const addUnique = (palette) => {
+    for (const colObj of palette) {
+      const isDuplicate = newPalette.some((item) => item.name === colObj.name);
+      if (!isDuplicate) {
+        newPalette.push(colObj);
+      }
+    }
+  };
+
+  addUnique(palette1);
+  addUnique(palette2);
+
+  return newPalette;
 }

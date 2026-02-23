@@ -45,17 +45,78 @@
  *   // => [{ rating: 5 }, { rating: 3 }]
  */
 export function createFilter(field, operator, value) {
-  // Your code here
+  let operators = ["<", ">", "<=", ">=", "==="];
+
+  if (!operators.includes(operator)) {
+    return function () {
+      return false;
+    };
+  }
+  const result = function (obj) {
+    switch (operator) {
+      case ">":
+        return obj[field] > value;
+      case "<":
+        return obj[field] < value;
+      case ">=":
+        return obj[field] >= value;
+      case "<=":
+        return obj[field] <= value;
+      case "===":
+        return obj[field] === value;
+    }
+  };
+
+  return result;
 }
 
 export function createSorter(field, order = "asc") {
-  // Your code here
+  return function (obj1, obj2) {
+    if (order === "asc") {
+      if (typeof obj1[field] === "string") {
+        return obj1[field].localeCompare(obj2[field]);
+      } else {
+        return obj1[field] - obj2[field];
+      }
+    } else if (order === "desc") {
+      if (typeof obj1[field] === "string") {
+        return obj2[field].localeCompare(obj1[field]);
+      } else {
+        return obj2[field] - obj1[field];
+      }
+    }
+  };
 }
 
 export function createMapper(fields) {
-  // Your code here
+  return function (obj) {
+    const objEntries = Object.entries(obj);
+    let newObjEntries = [];
+
+    for (const [field, value] of objEntries) {
+      if (fields.includes(field)) {
+        newObjEntries.push([field, value]);
+      }
+    }
+
+    return Object.fromEntries(newObjEntries);
+  };
 }
 
 export function applyOperations(data, ...operations) {
-  // Your code here
+  if (!Array.isArray(data)) {
+    return [];
+  }
+  for (const operation of operations) {
+    data = operation(data);
+  }
+  return data;
 }
+
+//  *   4. applyOperations(data, ...operations)
+//  *      - data: array of objects
+//  *      - operations: any number of functions to apply SEQUENTIALLY
+//  *      - Each operation takes an array and returns an array
+//  *      - Apply first operation to data, then second to result, etc.
+//  *      - Return final result
+//  *      - Agar data not array, return []

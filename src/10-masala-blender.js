@@ -53,29 +53,75 @@
  *   // => { name: "Haldi", form: "powder", packed: true, label: "Haldi Masala" }
  */
 export function pipe(...fns) {
-  // Your code here
+  if (fns.length === 0) {
+    return (x) => x;
+  }
+  const newFunction = (spice) => {
+    for (let i = 0; i < fns.length; i++) {
+      spice = fns[i](spice);
+    }
+
+    return spice;
+  };
+
+  return newFunction;
 }
 
 export function compose(...fns) {
-  // Your code here
+  if (fns.length === 0) {
+    return (x) => x;
+  }
+  const newFunction = (spice) => {
+    for (let i = fns.length - 1; i >= 0; i--) {
+      spice = fns[i](spice);
+    }
+
+    return spice;
+  };
+
+  return newFunction;
 }
 
 export function grind(spice) {
-  // Your code here
+  return { ...spice, form: "powder" };
 }
 
 export function roast(spice) {
-  // Your code here
+  return { ...spice, roasted: true, aroma: "strong" };
 }
 
 export function mix(spice) {
-  // Your code here
+  return { ...spice, mixed: true };
 }
 
 export function pack(spice) {
-  // Your code here
+  return { ...spice, packed: true, label: `${spice.name} Masala` };
 }
 
 export function createRecipe(steps) {
-  // Your code here
+  if (!Array.isArray(steps) || steps.length === 0) {
+    return (x) => x;
+  }
+  let listOfFunctions = [];
+
+  for (const step of steps) {
+    switch (step) {
+      case "grind":
+        listOfFunctions.push(grind);
+        break;
+      case "roast":
+        listOfFunctions.push(roast);
+        break;
+      case "pack":
+        listOfFunctions.push(pack);
+        break;
+      case "mix":
+        listOfFunctions.push(mix);
+        break;
+      default:
+        continue;
+    }
+  }
+
+  return pipe(...listOfFunctions);
 }
